@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package procks.v1;
+
+import "procks/v1/struct.proto";
+import "buf/validate/validate.proto";
+
+message ConnectRequest {
+  optional string id = 1 [(buf.validate.field).cel = {
+    id: "ConnectRequest.id"
+    message: "id must be alphanumeric and a max of 26 characters"
+    expression: 'this.matches("^[a-zA-Z0-9]{1,26}$")'
+  }];
+}
+
+message ConnectResponse {
+  Event event = 1;
+}
+
+service ProcksService {
+  rpc Connect(ConnectRequest) returns (stream ConnectResponse);
+}

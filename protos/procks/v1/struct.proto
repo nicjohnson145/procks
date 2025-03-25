@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package procks.v1;
+
+message Event {
+  message ConnectionEstablishedEvent {
+    string id = 1;
+    string url = 2;
+  }
+
+  message RequestRecievedEvent {
+    map<string, string> headers = 1;
+    bytes body = 2;
+    string path = 3;
+    string verb = 4;
+  }
+
+  oneof message {
+    ConnectionEstablishedEvent connection_established = 1;
+    RequestRecievedEvent request_recieved = 2;
+  }
+}

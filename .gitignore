@@ -25,5 +25,5 @@ go.work.sum
 .env
 
 # Produced binaries
-procks-server
-procks
+/procks-server
+/procks
