@@ -1,0 +1,12 @@
+version: '3'
+
+tasks:
+  run-controller:
+    desc: Build and run the controller locally
+    env:
+      LOG_FORMAT: human
+      LOG_LEVEL: debug
+      URL: "http://localhost:8080"
+    cmds:
+    - CGO_ENABLED=0 go build -o procks-server ./cmd/server
+    - ./procks-server
