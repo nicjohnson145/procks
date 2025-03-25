@@ -7,9 +7,11 @@ require (
 	connectrpc.com/connect v1.18.1
 	connectrpc.com/grpcreflect v1.3.0
 	github.com/bufbuild/protovalidate-go v0.9.2
+	github.com/carlmjohnson/requests v0.24.3
 	github.com/nicjohnson145/hlp v0.11.0
 	github.com/oklog/ulid/v2 v2.1.0
 	github.com/rs/zerolog v1.34.0
+	github.com/spf13/cobra v1.9.1
 	github.com/spf13/viper v1.20.0
 	github.com/stretchr/testify v1.10.0
 	golang.org/x/net v0.33.0
@@ -23,6 +25,7 @@ require (
 	github.com/fsnotify/fsnotify v1.8.0 // indirect
 	github.com/go-viper/mapstructure/v2 v2.2.1 // indirect
 	github.com/google/cel-go v0.23.2 // indirect
+	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jarxorg/wfs v0.3.2 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect

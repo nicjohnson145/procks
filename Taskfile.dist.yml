@@ -10,3 +10,14 @@ tasks:
     cmds:
     - CGO_ENABLED=0 go build -o procks-server ./cmd/server
     - ./procks-server
+
+  build-client:
+    desc: Build the client binary
+    cmds:
+    - CGO_ENABLED=0 go build -o procks ./cmd/client
+
+  run-echo:
+    desc: run the bench testing request echoer
+    dir: hack/echo-server
+    cmds:
+    - uv run flask --app main run --port 3000
