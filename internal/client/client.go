@@ -83,7 +83,10 @@ func (c *Client) forwardRequest(ctx context.Context, opts ProxyOpts, msg *pbv1.E
 		builder = builder.Header(key, value)
 	}
 
-	// TODO: query params
+	// Set query params
+	for key, value := range msg.Params {
+		builder = builder.Param(key, value)
+	}
 
 	if err := builder.Fetch(ctx); err != nil {
 		return fmt.Errorf("error executing request: %w", err)
