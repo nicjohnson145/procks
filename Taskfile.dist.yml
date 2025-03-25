@@ -1,5 +1,8 @@
 version: '3'
 
+vars:
+  STREAM_ID: 01JQ7NJ5CNBW5FQ92TQK6JM9KZ
+
 tasks:
   run-controller:
     desc: Build and run the controller locally
@@ -21,3 +24,19 @@ tasks:
     dir: hack/echo-server
     cmds:
     - uv run flask --app main run --port 3000
+
+  run-client:
+    desc: run the client as configured for smokes testing
+    env:
+      SERVER_URL: "http://localhost:8080"
+    cmds:
+    - task: build-client
+    - ./procks {{ .STREAM_ID }}
+
+  smokes-curls:
+    desc: execute a series of curl requests to smoke test the proxy
+    cmds:
+    - >
+      curl -H 'SomeHeader: SomeHeaderValue' localhost:8080/{{ .STREAM_ID }}/abc?query_param=value
+    - >
+      curl -d '{"body_param": "body_value"}' -X POST -H 'Content-Type: application/json' localhost:8080/{{ .STREAM_ID }}/post_route/sub_route?post_param=3

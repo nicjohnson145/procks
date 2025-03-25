@@ -76,7 +76,8 @@ func (c *Client) Proxy(ctx context.Context, opts ProxyOpts) error {
 func (c *Client) forwardRequest(ctx context.Context, opts ProxyOpts, msg *pbv1.Event_RequestRecievedEvent) error {
 	builder := requests.
 		URL(fmt.Sprintf("http://localhost:%v", opts.Port)).
-		Path(msg.Path)
+		Path(msg.Path).
+		BodyBytes(msg.Body)
 
 	// Set headers
 	for key, value := range msg.Headers {
@@ -87,6 +88,7 @@ func (c *Client) forwardRequest(ctx context.Context, opts ProxyOpts, msg *pbv1.E
 	for key, value := range msg.Params {
 		builder = builder.Param(key, value)
 	}
+
 
 	if err := builder.Fetch(ctx); err != nil {
 		return fmt.Errorf("error executing request: %w", err)

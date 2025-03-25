@@ -23,7 +23,7 @@ func root() *cobra.Command {
 	var port string
 
 	cmd := &cobra.Command{
-		Use:   "procks",
+		Use:   "procks [ID?]",
 		Short: "procks client",
 		Args:  cobra.RangeArgs(0, 1),
 		Long:  "client for configuring temporary development proxies",
@@ -38,7 +38,7 @@ func root() *cobra.Command {
 
 			logger := logging.Init(&logging.LoggingConfig{
 				Level:  logging.LogLevel(viper.GetString(client.LogLevel)),
-				Format: logging.LogFormat(viper.GetString(client.LogFormat)),
+				Format: logging.LogFormat("human"),
 			})
 
 			url := viper.GetString(client.ServerUrl)
@@ -55,6 +55,10 @@ func root() *cobra.Command {
 			opts := client.ProxyOpts{
 				Port: port,
 			}
+			if len(args) > 0 {
+				opts.ID = args[0]
+			}
+
 			if err := procksClient.Proxy(ctx, opts); err != nil {
 				logger.Err(err).Msg("error proxying")
 				return err

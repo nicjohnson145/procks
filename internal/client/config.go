@@ -15,8 +15,6 @@ const (
 
 	// LogLevel controls the verbosity of logging
 	LogLevel = "log.level"
-	// LogFormat controls the format of log messages
-	LogFormat = "log.format"
 )
 
 func InitConfig() error {
