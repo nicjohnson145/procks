@@ -13,6 +13,7 @@ message Event {
     bytes body = 2;
     string path = 3;
     string verb = 4;
+    map<string, string> params = 5;
   }
 
   oneof message {

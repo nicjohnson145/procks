@@ -166,6 +166,16 @@ func (s *Server) RequestHandler() (string, http.HandlerFunc) {
 			outHeaders[header] = val
 		}
 
+		// Again, i know this isnt strictly correct but i dont really care right now
+		outParams := map[string]string{}
+		for key, values := range r.URL.Query() {
+			val := ""
+			if len(values) > 0 {
+				val = values[0]
+			}
+			outParams[key] = val
+		}
+
 		payload := &pbv1.ConnectResponse{
 			Event: &pbv1.Event{
 				Message: &pbv1.Event_RequestRecieved{
@@ -174,6 +184,7 @@ func (s *Server) RequestHandler() (string, http.HandlerFunc) {
 						Path:    r.PathValue("path"),
 						Body:    reqBody,
 						Headers: outHeaders,
+						Params:  outParams,
 					},
 				},
 			},
