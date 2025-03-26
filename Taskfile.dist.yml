@@ -4,15 +4,20 @@ vars:
   STREAM_ID: 01JQ7NJ5CNBW5FQ92TQK6JM9KZ
 
 tasks:
-  run-controller:
-    desc: Build and run the controller locally
+  run-server:
+    desc: Build and run the server locally
     env:
       LOG_FORMAT: human
       LOG_LEVEL: debug
       URL: "http://localhost:8080"
     cmds:
-    - CGO_ENABLED=0 go build -o procks-server ./cmd/server
+    - task: build-server
     - ./procks-server
+
+  build-server:
+    desc: Build the server binary
+    cmds:
+    - CGO_ENABLED=0 go build -o procks-server ./cmd/server
 
   build-client:
     desc: Build the client binary
@@ -40,3 +45,11 @@ tasks:
       curl -H 'SomeHeader: SomeHeaderValue' localhost:8080/{{ .STREAM_ID }}/abc?query_param=value
     - >
       curl -d '{"body_param": "body_value"}' -X POST -H 'Content-Type: application/json' localhost:8080/{{ .STREAM_ID }}/post_route/sub_route?post_param=3
+
+  docker-server:
+    desc: build server docker images
+    preconditions:
+    - sh: '[[ -n "${TAG}" ]]'
+      msg: Must specify $TAG
+    cmds:
+    - docker build . -t ghcr.io/nicjohnson145/procks:$TAG
