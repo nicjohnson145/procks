@@ -77,6 +77,7 @@ func (c *Client) forwardRequest(ctx context.Context, opts ProxyOpts, msg *pbv1.E
 	builder := requests.
 		URL(fmt.Sprintf("http://localhost:%v", opts.Port)).
 		Path(msg.Path).
+		Method(msg.Verb).
 		BodyBytes(msg.Body)
 
 	// Set headers
