@@ -27,6 +27,9 @@ func root() *cobra.Command {
 		Short: "procks client",
 		Args:  cobra.RangeArgs(0, 1),
 		Long:  "client for configuring temporary development proxies",
+		PersistentPreRun: func(cmd *cobra.Command, args []string) {
+			cmd.SilenceUsage = true
+		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if err := client.InitConfig(); err != nil {
 				fmt.Printf("error initializing config: %v\n", err)
