@@ -62,6 +62,10 @@ func (c *Client) Proxy(ctx context.Context, opts ProxyOpts) error {
 			if err := c.forwardRequest(ctx, opts, concrete.RequestRecieved); err != nil {
 				c.logAndHandleError(err, "error forwarding request")
 			}
+			continue
+		case *pbv1.Event_HeartBeat:
+			c.log.Info().Msg("recieved server heartbeat")
+			continue
 		default:
 			return c.logAndHandleError(fmt.Errorf("unhandled message type of %T", msg.Event.Message), "error during message processing")
 		}

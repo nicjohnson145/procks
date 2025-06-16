@@ -16,8 +16,11 @@ message Event {
     map<string, string> params = 5;
   }
 
+  message HeartBeatEvent {}
+
   oneof message {
     ConnectionEstablishedEvent connection_established = 1;
     RequestRecievedEvent request_recieved = 2;
+    HeartBeatEvent heart_beat = 3;
   }
 }

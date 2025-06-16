@@ -75,13 +75,29 @@ func run() error {
 	// Setup signal handlers so we can gracefully shutdown
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
+	heartBeatCtx, heartBeatCancel := context.WithCancel(ctx)
+	defer heartBeatCancel()
 
 	go func() {
 		s := <-sigChan
 		logger.Info().Msgf("got signal %v, attempting graceful shutdown", s)
 		dieCtx, dieCancel := context.WithTimeout(ctx, 10*time.Second)
 		defer dieCancel()
+		heartBeatCancel()
 		_ = httpServer.Shutdown(dieCtx)
+	}()
+
+	// Start a heartbeat goroutine to ensure connections stay open
+	go func() {
+		ticker := time.NewTicker(viper.GetDuration(server.HeartBeatFrequency))
+		for {
+			select {
+			case <-ticker.C:
+				srv.Heartbeat(context.Background())
+			case <-heartBeatCtx.Done():
+				return
+			}
+		}
 	}()
 
 	logger.Info().Msgf("starting server on port %v", port)

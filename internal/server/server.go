@@ -59,6 +59,29 @@ func (s *Server) logAndHandleError(err error, msg string) error {
 	}
 }
 
+func (s *Server) Heartbeat(ctx context.Context) error {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
+	heartBeat := &pbv1.ConnectResponse{
+		Event: &pbv1.Event{
+			Message: &pbv1.Event_HeartBeat{
+				HeartBeat: &pbv1.Event_HeartBeatEvent{},
+			},
+		},
+	}
+
+	for streamID, handlerMap := range s.openHandlers {
+		for requestId, handler := range handlerMap {
+			if err := handler.Send(heartBeat); err != nil {
+				return fmt.Errorf("error sending heartbeat for stream %v handler %v: %w", streamID, requestId, err)
+			}
+		}
+	}
+
+	return nil
+}
+
 func (s *Server) Connect(ctx context.Context, req *connect.Request[pbv1.ConnectRequest], stream *connect.ServerStream[pbv1.ConnectResponse]) error {
 	if err := s.validateConnect(req); err != nil {
 		return s.logAndHandleError(err, "error validating")
