@@ -45,6 +45,8 @@ tasks:
       curl -H 'SomeHeader: SomeHeaderValue' localhost:8080/{{ .STREAM_ID }}/abc?query_param=value
     - >
       curl -d '{"body_param": "body_value"}' -X POST -H 'Content-Type: application/json' localhost:8080/{{ .STREAM_ID }}/post_route/sub_route?post_param=3
+    - >
+      curl localhost:8080/{{ .STREAM_ID }}
 
   docker-server:
     desc: build server docker images

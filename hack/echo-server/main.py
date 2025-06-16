@@ -8,6 +8,7 @@ log.setLevel(logging.ERROR)
 
 app = Flask(__name__)
 
+@app.route('/', defaults={'path': ''})
 @app.route("/<path:path>", methods=[m for m in HTTPMethod])
 def echo(path):
     print(

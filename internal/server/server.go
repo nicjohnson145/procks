@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 	"sync"
 
 	"connectrpc.com/connect"
@@ -141,11 +142,18 @@ func (s *Server) unregisterHandler(streamID string, requestID string) {
 }
 
 func (s *Server) RequestHandler() (string, http.HandlerFunc) {
-	return "/{streamID}/{path...}", func(w http.ResponseWriter, r *http.Request) {
+	return "/{path...}", func(w http.ResponseWriter, r *http.Request) {
+		parts := strings.Split(r.PathValue("path"), "/")
+		streamID := parts[0]
+		path := "/"
+		if len(parts) > 1 {
+			path = strings.Join(parts[1:], "/")
+		}
+
 		s.log.
 			Info().
-			Str("streamID", r.PathValue("streamID")).
-			Str("path", r.PathValue("path")).
+			Str("streamID", streamID).
+			Str("path", path).
 			Str("method", r.Method).
 			Msg("standard request recieved")
 
@@ -181,7 +189,7 @@ func (s *Server) RequestHandler() (string, http.HandlerFunc) {
 				Message: &pbv1.Event_RequestRecieved{
 					RequestRecieved: &pbv1.Event_RequestRecievedEvent{
 						Verb:    r.Method,
-						Path:    r.PathValue("path"),
+						Path:    path,
 						Body:    reqBody,
 						Headers: outHeaders,
 						Params:  outParams,
@@ -192,7 +200,7 @@ func (s *Server) RequestHandler() (string, http.HandlerFunc) {
 
 		s.mu.RLock()
 		defer s.mu.RUnlock()
-		handlers, ok := s.openHandlers[r.PathValue("streamID")]
+		handlers, ok := s.openHandlers[streamID]
 		if !ok {
 			w.WriteHeader(http.StatusNotFound)
 			return
